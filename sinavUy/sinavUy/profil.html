@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        body {
+            background-color: rgba(106, 123, 234, 0.26);
+        }
+        #ana {
+            width: 400px;
+            /*margin:0 auto;*/
+            border: 1px solid #f5ebeb;
+        }
+
+        #baslik {
+            padding: 10px 10px 10px 10px;
+            width: 380px;
+            position: relative;
+            /*min-height:400px;*/
+            border: 1px solid #f5ebeb;
+            text-decoration: underline;
+            text-decoration-color: #f5ebeb;
+            text-transform: uppercase;
+            color: firebrick;
+            font-size: 20px;
+        }
+
+        #avatar {
+            width: 80px;
+            height: 80px;
+            float: left;
+            /*text-align: center;*/
+            
+            margin-left:10px;
+            margin-top:10px;
+            position: absolute;
+        }
+
+            #avatar img {
+                max-width: 80px;
+                height: 80px;
+            }
+
+        #bilgiler {
+            /*border:1px solid;*/
+            position: relative;
+            margin-left: 100px;
+            margin-top: 10px;
+            height: 100px;
+            clear: both;
+            display: inline-block;
+            text-align: center;
+        }
+
+        #ozgecmis {
+            /*border:1px solid;*/
+            float: left;
+            position: relative;
+            clear: both;
+            margin-left:10px;
+            color:cornflowerblue;
+        }
+         #ozgecmislink{
+            margin-left:10px;
+            text-decoration-color:cornflowerblue;
+
+        }
+        #konular {
+            /*border:1px solid;*/
+            position: relative;
+            margin-left:10px;
+             color:cornflowerblue;
+        }
+        #konularlink{
+             margin-left:10px;
+        }
+        #konular:nth-child(2n+1){
+             margin-right:10px;
+            }
+    </style>
+
+</head>
+<body>
+    <div id="ana">
+        <div id="baslik"></div>
+        <div id="avatar">
+            
+
+        </div>
+        <div id="bilgiler">
+            
+        </div>
+        <br />
+        <a href="" id="ozgecmislink">Öz Geçmiş</a>
+        <div id="ozgecmis">
+
+        </div>
+        <br />
+        <a href="" id="konularlink">Konular</a>
+        <div id="konular">
+
+        </div>
+
+    </div>
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Content/jquery.cookie.js"></script>
+    <script>
+        if ($.cookie("login") != undefined) {
+            var eskiKullaniciler = $.cookie("login") || "[]";
+            var loginsDizi = JSON.parse(eskiKullaniciler);
+
+            
+            $('#baslik').append('<span>' + loginsDizi[0].Isim + ' ' + loginsDizi[0].soyisim + '</span>');
+            $('#avatar').append('<img src="' + loginsDizi[0].profil_resmi + '" />');
+            $('#bilgiler').append('<a href="">' + loginsDizi[0].d_tarihi + '</a><br />');
+            $('#bilgiler').append('<a href="">' + loginsDizi[0].mezun_oldgu_okul + '</a><br />');
+            $('#bilgiler').append('<a href="">' + loginsDizi[0].fakulte + '</a><br />');
+            $('#ozgecmis').append('<p>' + loginsDizi[0].ozgecmis + '</p>')
+            for (var i = 0; i < loginsDizi[0].konular.length; i++) {
+                $('#konular').append('<li><a href="">' + loginsDizi[0].konular[i] + '</a></li><br />');
+
+            }
+
+            $.cookie("login", JSON.stringify(loginsDizi), { expires: 7 });
+
+            $("#ozgecmislink").on("mouseenter", function () {
+                $("#ozgecmis").css("display", "none");
+            }).on("mouseleave", function () {
+                $("#ozgecmis").css("display", "block");
+            });
+
+            $("#konularlink").on("mouseenter", function () {
+                $("#konular").css("display", "none");
+            }).on("mouseleave", function () {
+                $("#konular").css("display", "block");
+            });
+            
+        }
+    </script>
+
+</body>
+</html>

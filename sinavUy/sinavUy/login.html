@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        body {
+            background-color: rgba(106, 123, 234, 0.26);
+        }
+        #login {
+            width: 250px;
+            height: 130px;
+            padding: 10px;
+            border: 1px solid #d3d3d3;
+            margin: auto;
+            background: #eee;
+            font: 12px Arial, Tahoma, Verdana;
+            margin-top: 200px;
+        }
+        .baslik {
+            background: #333;
+            color: #fff;
+            padding: 5px;
+            font-weight: bold;
+        }
+
+        #kullaniciAdi {
+            /*margin-left: 10px;
+            margin-top: 10px;*/
+        }
+
+        #sifre {
+            /*margin-left: 10px;
+            margin-top: 10px;*/
+        }
+
+        #ekle {
+            float: right;
+            margin-right: 25px;
+            border: 1px solid #666;
+            padding: 2px 5px;
+            background: cornflowerblue;
+            color: #fff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+        <div id="login">
+            <div class="baslik"> Üye Paneli</div>
+            <form>
+                <p>
+                    Kullanıcı adı :      <input type="text" name="kullaniciAdi" id="kullaniciAdi" /></p>
+                <p>
+                    Şifre :      <input style="margin-left:42px; "  type="text" name="sifre" id="sifre" />
+                </p>
+                
+                
+            </form>
+            <button id="ekle">giriş</button>
+            <span id="mesaj"></span>
+        </div>
+        <script src="Scripts/jquery-1.10.2.min.js"></script>
+        <script src="Content/jquery.cookie.js"></script>
+        <script>
+            var yanlisSayisi = 0;
+            function kisiOlustur(isim, soyisim, kullanici_adi, profil_resmi, d_tarihi, mezun_oldgu_okul, fakulte, ozgecmis, konular) {
+                var obj = {
+                    Isim: isim,
+                    soyisim: soyisim,
+                    kullanici_adi,
+                    profil_resmi: profil_resmi,
+                    d_tarihi: d_tarihi,
+                    mezun_oldgu_okul: mezun_oldgu_okul,
+                    fakulte: fakulte,
+                    ozgecmis: ozgecmis,
+                    konular: konular
+
+                };
+                return obj;
+            }
+            function sayac(toplamSaniye) {
+                $('#ekle').attr("disabled", "disabled");
+                interval = setInterval(function () {
+                    toplamSaniye--;
+                    $.cookie("kalanSure", toplamSaniye, { expires: 10 });
+
+                    if (toplamSaniye < 1) {
+                        yanlisSayisi = 0;
+                        $('#ekle').removeAttr("disabled");
+                    }
+                }, 1000);
+            }
+            $('#ekle').bind('click', function () {
+
+                var isim = $('#kullaniciAdi').val();
+                var sifre = $('#sifre').val();
+
+                $.ajax({
+                    url: 'Content/kullanicilar.js',
+                    method: 'get',
+                    success: function (data) {
+
+                        var kullanicilar = JSON.parse(data);
+
+                        for (var j = 0; j < kullanicilar.length; j++) {
+                            var kullanici = kullanicilar[j];
+                            $.cookie("yanlisSayisi", yanlisSayisi, { expires: 70 })
+                            if (isim == kullanici.kullanici_adi && sifre == kullanici.sifre) {
+                                
+
+                                var kisi = kisiOlustur(kullanici.isim, kullanici.soyisim, kullanici.kullanici_adi, kullanici.profil_resmi, kullanici.d_tarihi, kullanici.mezun_oldgu_okul, kullanici.fakulte, kullanici.ozgecmis, kullanici.konular);
+                                var KullanicilerK ="[]";
+                                var loginsDizi = JSON.parse(KullanicilerK);
+
+                                loginsDizi.push(kisi);
+
+                                $.cookie("login", JSON.stringify(loginsDizi), { expires: 70 });
+                                
+                                yanlisSayisi = 0;
+                                
+                                window.location.href = 'profil.html';
+                                $('#mesaj')[0].innerText = "";
+                                yanlisSayisi--;
+                                break;
+
+                            }
+                            
+                            
+                        }
+                        
+                        yanlisSayisi++;
+                        $('#mesaj')[0].innerText = "hatalı giriş";
+                        $('#mesaj')[0].setAttribute('style', 'color:red');
+                        $("#mesaj").fadeIn().delay(3000).fadeOut();
+                        $.cookie("yanlisSayisi", yanlisSayisi, { expires: 70 })
+                        if (yanlisSayisi >= 5 ) {
+                            
+                            var toplamSaniye = 3000;
+                            sayac(toplamSaniye);
+                            
+                        }
+                    }
+                });
+            });
+            if ($.cookie("yanlisSayisi") != undefined) {
+                yanlisSayisi = $.cookie("yanlisSayisi");
+                
+            }
+            if ($.cookie("kalanSure") != undefined) {
+                var sure = parseInt($.cookie("kalanSure"));
+                sayac(sure);
+
+            }
+        </script>
+</body>
+</html>
